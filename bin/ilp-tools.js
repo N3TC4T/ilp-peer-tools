@@ -1,10 +1,8 @@
 #!/usr/bin/env node
-
+require('../env');
 const program = require('commander');
 const { prompt } = require('inquirer');
 const { maybeRequire } = require('../src/utils');
-
-
 
 const uplinks = {
     xrp: maybeRequire('../src/xrp')

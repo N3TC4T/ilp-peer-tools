@@ -1,5 +1,3 @@
-require('dotenv').config();
-
 const { RippleAPI } = require('ripple-lib');
 const { isValidAddress } = require('ripple-address-codec');
 const crypto = require('crypto');
@@ -19,7 +17,14 @@ const base64url = buf => buf
 
 const utils = require('./utils');
 
-let PEERS = require(path.resolve(process.cwd(), 'peers.json'));
+if (!fs.existsSync(path.resolve(process.env.ILP_DIR, 'peers.json'))) {
+    fs.writeFileSync(path.resolve(process.env.ILP_DIR, 'peers.json'), JSON.stringify({}), err => {
+        if (err) return console.error(err);
+    });
+}
+
+let PEERS = require(path.resolve(process.env.ILP_DIR, 'peers.json'));
+
 
 const questionFields = {
     server: [
