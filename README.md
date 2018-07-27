@@ -16,7 +16,7 @@
 
 * set your ILP connector installation path ``export ILP_DIR=/srv/app/ilp-connector``
 
-* create .env file in connector installation path with this content :
+* create ``.env`` file in connector installation path with this content :
 
 ```
 RIPPLE_ADDRESS=<YOUR_RIPPLE_ADDRESS>
