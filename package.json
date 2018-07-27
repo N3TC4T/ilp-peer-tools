@@ -1,0 +1,26 @@
+{
+  "name": "ilp-peer-tools",
+  "version": "1.0.0",
+  "description": "",
+  "preferGlobal": true,
+  "bin": {
+    "ilp-tools": "./bin/ilp-tools.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "N3TC4T",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^2.4.1",
+    "commander": "^2.16.0",
+    "dotenv": "^6.0.0",
+    "good-table": "^1.0.3",
+    "inquirer": "^6.0.0",
+    "json-templates": "^2.1.0",
+    "lodash": "^4.17.10",
+    "moment": "^2.22.2",
+    "ripple-address-codec": "^2.0.1",
+    "ripple-lib": "^1.0.0-beta.3"
+  }
+}
