@@ -14,7 +14,7 @@
 
 * Install by ``npm install xrp-community/ilp-peer-tools -g``
 
-* set your ILP connector installation path ``export ILP_DIR=/srv/app/ilp-connector.
+* set your ILP connector installation path ``export ILP_DIR=/srv/app/ilp-connector``
 
 * create .env file in connector installation path with this content :
 
