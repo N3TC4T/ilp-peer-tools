@@ -14,7 +14,7 @@
 
 * Install by ``npm install xrp-community/ilp-peer-tools -g``
 
-* set you ilp connector installation path ``export ILP_DIR=/srv/app/ilp-connector.
+* set your ILP connector installation path ``export ILP_DIR=/srv/app/ilp-connector.
 
 * create .env file in connector installation path with this content :
 
@@ -65,6 +65,12 @@ run for usage :
 ### Example
 
 ```ilp-tools xrp:add server```
+
+### Attention
+
+you need to reload the connector after adding or removing a peer 
+
+```pm2 reload launch.config.js --update-env```
 
 
 
