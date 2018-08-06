@@ -12,7 +12,7 @@
 ### Installation
 ------------
 
-* Install by ``npm install xrp-community/ilp-peer-tools -g``
+* Install by ``npm install N3TC4T/ilp-peer-tools -g``
 
 * set your ILP connector installation path ``export ILP_DIR=/srv/app/ilp-connector``
 
