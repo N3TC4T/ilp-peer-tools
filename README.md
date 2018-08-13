@@ -12,7 +12,6 @@
 - [ ] More ...
 
 ### Installation
-------------2
 
 * Install by ``npm install N3TC4T/ilp-peer-tools -g``
 
