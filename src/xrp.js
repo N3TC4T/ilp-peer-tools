@@ -2,7 +2,6 @@ const { RippleAPI } = require('ripple-lib');
 const { isValidAddress } = require('ripple-address-codec');
 const crypto = require('crypto');
 const fs = require('fs');
-const path = require('path');
 const chalk = require('chalk');
 const table = require('good-table');
 const parse = require("json-templates");
@@ -17,14 +16,7 @@ const base64url = buf => buf
 
 const utils = require('./utils');
 
-if (!fs.existsSync(path.resolve(process.env.ILP_DIR, 'peers.json'))) {
-    fs.writeFileSync(path.resolve(process.env.ILP_DIR, 'peers.json'), JSON.stringify({}), err => {
-        if (err) return console.error(err);
-    });
-}
-
-let PEERS = require(path.resolve(process.env.ILP_DIR, 'peers.json'));
-
+let PEERS = utils.loadAccounts();
 
 const questionFields = {
     server: [
@@ -147,7 +139,7 @@ async function printChannels (peerName) {
     console.log('fetching channels...');
     let channels = _.get(await this.api.connection.request({
         command: 'account_channels',
-        account: process.env.RIPPLE_ADDRESS
+        account: process.env.XRP_ADDRESS
     }), 'channels');
 
     console.log(chalk.green('account:'), process.env.RIPPLE_ADDRESS);
@@ -171,40 +163,48 @@ async function printChannels (peerName) {
 }
 
 function addPeer(data, type){
+    let peer = {}
     if(type === 'server'){
-        PEERS = _.assign({[data.name]: PEER_SERVER_TEMPLATE({
+        peer = PEER_SERVER_TEMPLATE({
                 peerAddress: data.address,
                 rippleSecret: process.env.RIPPLE_SECRET,
                 rippleAddress: process.env.RIPPLE_ADDRESS,
                 port: data.port,
                 secret: data.secret
-            })}, PEERS);
+            });
     }else{
-        PEERS = _.assign({ [data.name] : PEER_CLIENT_TEMPLATE({
+        peer = PEER_CLIENT_TEMPLATE({
                 peerAddress: data.address,
                 rippleSecret: process.env.RIPPLE_SECRET,
                 rippleAddress: process.env.RIPPLE_ADDRESS,
                 btpURL: data.btpUrl
-            })}, PEERS);
+            })
     }
 
-    fs.writeFileSync(path.resolve(process.cwd(), 'peers.json'), JSON.stringify(PEERS, null, 4), err => {
-        if (err) return console.error(err);
+    const peerFilePath = `${process.env.ILP_CONFIG_DIR}/peers-available/${data.name}.conf.js`;
+    const peerEnablePath = `${process.env.ILP_CONFIG_DIR}/peers-enabled/${data.name}.conf.js`;
+    const peerFileContent = `module.exports = ${JSON.stringify(peer)}`;
+    fs.writeFile(peerFilePath , peerFileContent, (err) => {
+        if (err) throw err;
+        fs.symlink(peerFilePath, peerEnablePath, (err) => {
+            if (err) throw err;
+        })
+        console.log(chalk.green(`\nSuccessfully added new peer ${data.name}`));
+        if(type === 'server') {
+            console.log(chalk.green('BTP URL: '));
+            console.log(`btp+ws://:${data.secret}@${process.env.BTP_URL}:${data.port}`);
+            console.log('\n')
+        }
     });
-
-    if(type === 'server') {
-        console.log(chalk.green('\nSuccessfully added new peer'));
-        console.log(chalk.green('BTP URL: '));
-        console.log(`btp+ws://:${data.secret}@${process.env.BTP_URL}:${data.port}`);
-        console.log('\n')
-    }
 }
 
 function removePeer(peerName){
-    _.unset(PEERS, peerName);
-    fs.writeFileSync(path.resolve(process.cwd(), 'peers.json'), JSON.stringify(PEERS, null, 4), err => {
-        if (err) return console.error(err);
-    });
+    const peerEnablePath = `${process.env.ILP_CONFIG_DIR}/peers-enabled/${peerName}.conf.js`;
+    fs.unlink(peerEnablePath, (err) => {
+        if (err) throw err;
+        console.log(chalk.green(`\nSuccessfully removed peer ${peerName}` ));
+    })
+
 }
 
 module.exports = {  addPeer, removePeer , printChannels, showPeer, questionFields };

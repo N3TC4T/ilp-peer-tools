@@ -48,8 +48,32 @@ const portInUse = (port) => {
     });
 };
 
+function isConfigFile (file) {
+    return file.endsWith('conf.js')
+}
+
+function getAccountFromConfigFileName (file) {
+    return file.slice(0, file.length - 8)
+}
+
+function loadAccounts () {
+    const peerConfDir = `${proccess.env.ILP_CONF_DIR}/peers-enabled`
+    console.log(`Loading account config from ${peerConfDir}`)
+    const accounts = {}
+    const peers = fs.readdirSync(peerConfDir).filter(isConfigFile)
+    if (!peers.length) throw new Error('No peer configurations found')
+    peers.forEach((file) => {
+        const account = getAccountFromConfigFileName(file)
+        accounts[account] = require(peerConfDir + '/' + file)
+        console.log(`- ${account} (${accounts[account].relation}) : ${accounts[account].plugin}`)
+    })
+    return accounts
+}
+
+
 module.exports = {
     formatChannelToRow,
     portInUse,
-    maybeRequire
+    maybeRequire,
+    loadAccounts
 };

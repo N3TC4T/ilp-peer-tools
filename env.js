@@ -1,10 +1,11 @@
-const path = require('path');
-
-if(!process.env.ILP_DIR){
-    throw Error("ILP_DIR env variable is not set!")
+if(!process.env.ILP_CONFIG_DIR){
+    process.env.ILP_CONFIG_DIR = '/etc/ilp-connector'
 }
-const dotenv = require('dotenv').config({ path: path.resolve(process.env.ILP_DIR, '.env'), silent:true });
 
-if (dotenv.error) {
-    throw Error(dotenv.error);
+if(!process.env.XRP_ADDRESS){
+    throw Error("XRP_ADDRESS env variable is not set!")
+}
+
+if(!process.env.XRP_SECRET){
+    throw Error("XRP_SECRET env variable is not set!")
 }
