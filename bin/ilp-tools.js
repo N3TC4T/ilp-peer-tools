@@ -2,7 +2,9 @@
 require('../env');
 const program = require('commander');
 const { prompt } = require('inquirer');
-const { maybeRequire } = require('../src/utils');
+const { maybeRequire, restartConnector } = require('../src/utils');
+
+const { restart , disablePeer , enablePeer} = require('../src/global');
 
 const uplinks = {
     xrp: maybeRequire('../src/xrp')
@@ -16,6 +18,25 @@ program
 
 Object.keys(uplinks).forEach((uplinkName) => {
     program
+        .command(`restart`)
+        .alias('r')
+        .description('Restart Connector')
+        .action( restart );
+
+    program
+        .command(`disable <peerName> `)
+        .alias('d')
+        .description('Disable a peers')
+        .action(name => disablePeer(name));
+
+    program
+        .command(`enable <peerName> `)
+        .alias('e')
+        .description('Enable a peers')
+        .action(name => enablePeer(name));
+
+
+    program
         .command(`${uplinkName}:add <type>`)
         .alias('a')
         .description('Add a Peer')
@@ -25,11 +46,6 @@ Object.keys(uplinks).forEach((uplinkName) => {
             );
         });
 
-    program
-        .command(`${uplinkName}:remove <peerName> `)
-        .alias('d')
-        .description('Remove a peers')
-        .action(name => uplinks[uplinkName].removePeer(name));
 
     program
         .command(`${uplinkName}:channels [peerName] `)
@@ -38,10 +54,12 @@ Object.keys(uplinks).forEach((uplinkName) => {
         .action(name => uplinks[uplinkName].printChannels(name));
 
     program
-        .command(`${uplinkName}:peer <peerName>`)
+        .command(`${uplinkName}:peers [peerName]`)
         .alias('p')
-        .description('Show Peer')
-        .action( name => uplinks[uplinkName].showPeer(name));
+        .description('Show Peers')
+        .action( name => uplinks[uplinkName].showPeers(name));
+
+
 });
 
 
