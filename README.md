@@ -13,7 +13,7 @@
 
 ### Installation
 
-* Install by ``npm install N3TC4T/ilp-peer-tools -g``
+Install by ``npm install N3TC4T/ilp-peer-tools -g``
 
 ### Configuration Variables
 
