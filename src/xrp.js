@@ -114,14 +114,18 @@ function getPeer(peerName) {
     }
 }
 
-function showPeer(peerName) {
-    const peer = getPeer(peerName);
-    console.log(JSON.stringify(peer, null, 4));
-    const listener = _.get(peer, 'options.listener', false);
-    if(listener){
-        console.log(chalk.green('\nBTP URL: '));
-        console.log(`btp+ws://:${listener.secret}@${process.env.BTP_URL}:${listener.port}`);
-        console.log('\n')
+function showPeers(peerName) {
+    if (peerName){
+        const peer = getPeer(peerName);
+        console.log(JSON.stringify(peer, null, 4));
+        const listener = _.get(peer, 'options.listener', false);
+        if(listener){
+            console.log(chalk.green('\nBTP URL: '));
+            console.log(`btp+ws://:${listener.secret}@${process.env.BTP_URL}:${listener.port}`);
+            console.log('\n')
+        }
+    }else{
+        console.log(_.keys(PEERS))
     }
 }
 
@@ -183,7 +187,7 @@ function addPeer(data, type){
 
     const peerFilePath = `${process.env.ILP_CONFIG_DIR}/peers-available/${data.name}.conf.js`;
     const peerEnablePath = `${process.env.ILP_CONFIG_DIR}/peers-enabled/${data.name}.conf.js`;
-    const peerFileContent = `module.exports = ${JSON.stringify(peer)}`;
+    const peerFileContent = `module.exports = ${JSON.stringify(peer, null, 4)}`;
     fs.writeFile(peerFilePath , peerFileContent, (err) => {
         if (err) throw err;
         fs.symlink(peerFilePath, peerEnablePath, (err) => {
@@ -198,13 +202,4 @@ function addPeer(data, type){
     });
 }
 
-function removePeer(peerName){
-    const peerEnablePath = `${process.env.ILP_CONFIG_DIR}/peers-enabled/${peerName}.conf.js`;
-    fs.unlink(peerEnablePath, (err) => {
-        if (err) throw err;
-        console.log(chalk.green(`\nSuccessfully removed peer ${peerName}` ));
-    })
-
-}
-
-module.exports = {  addPeer, removePeer , printChannels, showPeer, questionFields };
+module.exports = {  addPeer, printChannels, showPeers, questionFields };

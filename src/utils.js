@@ -1,6 +1,7 @@
 const chalk = require('chalk');
 const moment = require('moment');
 const net = require('net');
+const fs = require('fs');
 
 const maybeRequire = (pkg) => {
     try {
@@ -57,23 +58,20 @@ function getAccountFromConfigFileName (file) {
 }
 
 function loadAccounts () {
-    const peerConfDir = `${proccess.env.ILP_CONF_DIR}/peers-enabled`
-    console.log(`Loading account config from ${peerConfDir}`)
-    const accounts = {}
-    const peers = fs.readdirSync(peerConfDir).filter(isConfigFile)
-    if (!peers.length) throw new Error('No peer configurations found')
+    const peerConfDir = `${process.env.ILP_CONFIG_DIR}/peers-enabled`;
+    const accounts = {};
+    const peers = fs.readdirSync(peerConfDir).filter(isConfigFile);
+    if (!peers.length) throw new Error('No peer configurations found');
     peers.forEach((file) => {
-        const account = getAccountFromConfigFileName(file)
+        const account = getAccountFromConfigFileName(file);
         accounts[account] = require(peerConfDir + '/' + file)
-        console.log(`- ${account} (${accounts[account].relation}) : ${accounts[account].plugin}`)
-    })
+    });
     return accounts
 }
-
 
 module.exports = {
     formatChannelToRow,
     portInUse,
     maybeRequire,
-    loadAccounts
+    loadAccounts,
 };
